@@ -18,6 +18,10 @@ public class Seller implements Serializable{
 	private String name;
 	private double tasa;
 	
+	public Long getId() {
+		return id;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -30,4 +34,5 @@ public class Seller implements Serializable{
 	public void setTasa(double tasa) {
 		this.tasa = tasa;
 	}
+
 }

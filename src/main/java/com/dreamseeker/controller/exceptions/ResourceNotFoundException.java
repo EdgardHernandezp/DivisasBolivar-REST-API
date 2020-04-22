@@ -1,11 +1,11 @@
 package com.dreamseeker.controller.exceptions;
 
-public class TasaNotFoundException extends RuntimeException {
+public class ResourceNotFoundException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
 	@Override
 	public String getMessage() {
-		return "No se pudieron devolver las tasas";
+		return "No se pudo devolver el recurso";
 	}
 }

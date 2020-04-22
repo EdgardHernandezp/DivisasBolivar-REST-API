@@ -1,16 +1,22 @@
 package com.dreamseeker.controller;
 
+import java.net.URI;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.dreamseeker.controller.errors.ErrorTasa;
-import com.dreamseeker.controller.exceptions.TasaNotFoundException;
+import com.dreamseeker.controller.exceptions.ResourceNotFoundException;
 import com.dreamseeker.model.entities.Seller;
 import com.dreamseeker.model.entities.Tasa;
 import com.dreamseeker.model.services.DAOTasaService;
@@ -23,19 +29,30 @@ public class APIController {
 	
 	@GetMapping("/tasas")
 	public Tasa getTasas() {
-		Tasa tasa = repo.findTasas().get();
-		if (tasa == null) throw new TasaNotFoundException();
-		return tasa;
+		return repo.findTasas().orElseThrow(ResourceNotFoundException::new);
 	}
 	
-	@ExceptionHandler(TasaNotFoundException.class)
-	@ResponseStatus(HttpStatus.NOT_FOUND)
-	public ErrorTasa tasaNotFound(TasaNotFoundException e) {
-		return new ErrorTasa(e.getMessage());
-	}
 	
 	@PostMapping("/sellers/addNew")
-	public Seller addNewSeller(@RequestBody Seller seller) {
-		return repo.save(seller);
+	public ResponseEntity<Seller> addNewSeller(@RequestBody Seller seller, UriComponentsBuilder uriBuilder) {
+		seller = repo.save(seller);
+		String id = Long.toString(seller.getId());
+		
+		URI uri = uriBuilder.path("/sellers/").path(id).build().toUri();
+		
+		HttpHeaders header = new HttpHeaders();
+		header.setLocation(uri);
+		return new ResponseEntity<Seller>(seller,header,HttpStatus.CREATED);
+	}
+	
+	@GetMapping("/sellers/{id}")
+	public Seller getSeller(@PathVariable long id) {
+		return repo.findById(id).orElseThrow(ResourceNotFoundException::new);
+	}
+	
+	@ExceptionHandler(ResourceNotFoundException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public ErrorTasa tasaNotFound(ResourceNotFoundException e) {
+		return new ErrorTasa(e.getMessage());
 	}
 }

@@ -27,4 +27,8 @@ public class DAOTasaService {
 		return sellerRepo.save(seller);
 	}
 	
+	public Optional<Seller> findById(Long id) {
+		return sellerRepo.findById(id);
+	}
+	
 }
