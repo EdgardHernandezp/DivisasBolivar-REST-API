@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,7 +50,16 @@ public class APIController {
 	public Seller getSeller(@PathVariable long id) {
 		return repo.findById(id).orElseThrow(ResourceNotFoundException::new);
 	}
-	
+
+	@PutMapping("/sellers/{id}")
+	public Seller updateSeller(@PathVariable long id, @RequestBody Seller modifiedSeller) {
+		System.out.println("ID: " + id);
+		Seller currentSeller = repo.findById(id).orElseThrow(ResourceNotFoundException::new);
+		currentSeller.setName(modifiedSeller.getName());
+		currentSeller.setTasa(modifiedSeller.getTasa());
+		return repo.save(currentSeller);
+	}
+
 	@ExceptionHandler(ResourceNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	public ErrorTasa tasaNotFound(ResourceNotFoundException e) {
