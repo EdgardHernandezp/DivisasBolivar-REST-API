@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,11 +54,16 @@ public class APIController {
 
 	@PutMapping("/sellers/{id}")
 	public Seller updateSeller(@PathVariable long id, @RequestBody Seller modifiedSeller) {
-		System.out.println("ID: " + id);
 		Seller currentSeller = repo.findById(id).orElseThrow(ResourceNotFoundException::new);
 		currentSeller.setName(modifiedSeller.getName());
 		currentSeller.setTasa(modifiedSeller.getTasa());
 		return repo.save(currentSeller);
+	}
+
+	@DeleteMapping("/sellers/delete/{id}")
+	public void deleteSeller(@PathVariable Long id) {
+		repo.deleteSeller(id);
+		System.out.println("Seller eliminated");
 	}
 
 	@ExceptionHandler(ResourceNotFoundException.class)

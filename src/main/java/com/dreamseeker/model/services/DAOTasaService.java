@@ -30,5 +30,9 @@ public class DAOTasaService {
 	public Optional<Seller> findById(Long id) {
 		return sellerRepo.findById(id);
 	}
+
+	public void deleteSeller(Long id) {
+		sellerRepo.deleteById(id);
+	}
 	
 }
